@@ -16,7 +16,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-public class ScrabbleSolved {
+import com.sun.corba.se.impl.encoding.OSFCodeSetRegistry.Entry;
+
+public class Scrabble {
 
 	private static final int[] scrabbleENScore = {
 			// a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p,  q, r, s, t, u, v, w, x, y, z
@@ -35,7 +37,40 @@ public class ScrabbleSolved {
 		
 		System.out.println("# of words in the Scrabble dictionnary : " + scrabbleWords.size()) ;
 		System.out.println("# of words used by Shakespeare : " + shakespeareWords.size()) ;
-        
+		
+		// TASK 4 - But what about those double 'zz'? Could we use blanks?
+		// 4.1 Write a function that takes a word and returns a set of letters mapped to the number of occurrences in the word 
+		Function<String, Map<Integer, Long>> letterHisto = 
+						word -> word.chars()
+								.mapToObj(Integer::new)
+								.collect(Collectors.groupingBy(
+										Function.identity(),
+										Collectors.counting()
+									));
+						
+		// 4.2 Write a function that takes a word and computes the number of blanks required for that word in scrabble
+		Function<String, Integer> nBlanks = 
+						word -> letterHisto.apply(word)
+								.entrySet().stream()
+								.mapToInt(
+									entry -> Math.max(0, entry.getValue().intValue() - scrabbleENDistribution[entry.getKey() - 'a'])
+								)
+								.sum();
+						
+		// TASK 5 - There are only 2 blanks in scrabble - Modify code in task 2 to ensure that we only consider words with up to 2 blanks
+		
+		// TASK 6 - Write a score function that takes blanks into account (blank => 0 points) and use it in task 2
+		Function<String, Integer> score2 =
+				word -> letterHisto.apply(word)
+				.entrySet().stream()
+				.mapToInt(
+					entry -> Math.min(
+								entry.getValue().intValue(),
+								scrabbleENDistribution[entry.getKey() - 'a']
+							) * scrabbleENScore[entry.getKey() - 'a']
+				)
+				.sum();
+				
 		// TASK 1 - How many point is a word worth in scrabble
 		Function<String, Integer> score =
 				word -> word.chars().map(letter -> scrabbleENScore[letter - 'a']).sum();
@@ -44,9 +79,11 @@ public class ScrabbleSolved {
 		// 2.1 First, we just want to count those words in each score group
 		NavigableMap<Integer, Long> shakespeareScores = 
 				shakespeareWords.stream()
+					.filter(scrabbleWords::contains)
+					.filter(word -> nBlanks.apply(word) <= 2)
 					.collect(
 							Collectors.groupingBy(
-									score,
+									score2,
 									TreeMap::new,
 									Collectors.counting()
 							)
@@ -56,14 +93,18 @@ public class ScrabbleSolved {
 		// 2.2 And second, can we list the words in the top three groups
 		Map<Integer, List<String>> shakespeareScores2 = 
 				shakespeareWords.stream()
+					.filter(scrabbleWords::contains)
+					.filter(word -> nBlanks.apply(word) <= 2)
 					.collect(
 							Collectors.groupingBy(
-									score,
+									score2,
 									TreeMap::new,
 									Collectors.toList()
 							)
-					).descendingMap().headMap(getNthKey(shakespeareScores, 3), true);
+					).descendingMap().headMap(getNthKey(shakespeareScores, 3));
 		System.out.println("Words of Shakespeare grouped by their Scrabble score : " + shakespeareScores2);
+		
+		// TASK 3 - Hmmm, we are getting some strange words here.  Modify code in task 2 to process only words that are listed in the scrabble dictionary
 	}
 	
 	private static Set<String> readFile(String folder, String file) throws IOException {
