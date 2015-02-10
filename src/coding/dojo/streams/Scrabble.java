@@ -37,68 +37,28 @@ public class Scrabble {
 		
 		// TASK 4 - But what about those double 'zz'? Could we use blanks?
 		// 4.1 Write a function that takes a word and returns a set of letters mapped to the number of occurrences in the word 
-		Function<String, Map<Integer, Long>> letterHisto = 
-						word -> word.chars()
-								.mapToObj(Integer::new)
-								.collect(Collectors.groupingBy(
-										Function.identity(),
-										Collectors.counting()
-									));
+		Function<String, Map<Integer, Long>> letterHisto = null;
 						
 		// 4.2 Write a function that takes a word and computes the number of blanks required for that word in scrabble
-		Function<String, Integer> nBlanks = 
-						word -> letterHisto.apply(word)
-								.entrySet().stream()
-								.mapToInt(
-									entry -> Math.max(0, entry.getValue().intValue() - scrabbleENDistribution[entry.getKey() - 'a'])
-								)
-								.sum();
+		Function<String, Integer> nBlanks = null;
 						
 		// TASK 5 - There are only 2 blanks in scrabble - Modify code in task 2 to ensure that we only consider words with up to 2 blanks
 		
 		// TASK 6 - Write a score function that takes blanks into account (blank => 0 points) and use it in task 2
-		Function<String, Integer> score2 =
-				word -> letterHisto.apply(word)
-				.entrySet().stream()
-				.mapToInt(
-					entry -> Math.min(
-								entry.getValue().intValue(),
-								scrabbleENDistribution[entry.getKey() - 'a']
-							) * scrabbleENScore[entry.getKey() - 'a']
-				)
-				.sum();
+		Function<String, Integer> score2 = null;
 				
 		// TASK 1 - How many point is a word worth in scrabble
-		Function<String, Integer> score =
-				word -> word.chars().map(letter -> scrabbleENScore[letter - 'a']).sum();
+		Function<String, Integer> score = null;
 		
 		// TASK 2 - Group words by their scrabble score
 		// 2.1 First, we just want to count those words in each score group
-		NavigableMap<Integer, Long> shakespeareScores = 
-				shakespeareWords.stream()
-					.filter(scrabbleWords::contains)
-					.filter(word -> nBlanks.apply(word) <= 2)
-					.collect(
-							Collectors.groupingBy(
-									score2,
-									TreeMap::new,
-									Collectors.counting()
-							)
-					).descendingMap();
+		NavigableMap<Integer, Long> shakespeareScores = null;
+		
 		System.out.println("# of Words of Shakespeare grouped by their Scrabble score : " + shakespeareScores);
 		
 		// 2.2 And second, can we list the words in the top three groups
-		Map<Integer, List<String>> shakespeareScores2 = 
-				shakespeareWords.stream()
-					.filter(scrabbleWords::contains)
-					.filter(word -> nBlanks.apply(word) <= 2)
-					.collect(
-							Collectors.groupingBy(
-									score2,
-									TreeMap::new,
-									Collectors.toList()
-							)
-					).descendingMap().headMap(getNthKey(shakespeareScores, 3));
+		Map<Integer, List<String>> shakespeareScores2 = null;
+		
 		System.out.println("Words of Shakespeare grouped by their Scrabble score : " + shakespeareScores2);
 		
 		// TASK 3 - Hmmm, we are getting some strange words here.  Modify code in task 2 to process only words that are listed in the scrabble dictionary
@@ -106,32 +66,11 @@ public class Scrabble {
 	
 		// BONUS (If we have time) Can you find the best word that Shakespeare could have played as the first move?
         // scoring function 
-        Function<String, Integer> scoreOnBoard = 
-        		word -> 2*( // the first word scores double at Scrabble 
-	        				score2.apply(word) + 
-	        				Stream.of(
-	        				    word.chars().skip(4), 
-	        				    word.chars().limit(Integer.max(0, word.length() - 4))
-	        				)
-	        				.flatMapToInt(Function.identity())
-	        				.map(letter -> scrabbleENScore[letter - 'a'])
-	        				.max()
-	        				.orElse(0)
-	        			) +
-	        			(word.length() == 7 ? 50 : 0) ; // there is a 50 pts bonus for a 7 letters word
-        Map<Integer, List<String>> mapOnBoard = 
-                shakespeareWords.stream()
-                        .filter(scrabbleWords::contains)
-                        .filter(word -> nBlanks.apply(word) <= 2L)
-                        .filter(word -> scoreOnBoard.apply(word ) >= 114)
-                        .collect(
-                            Collectors.groupingBy(
-                        		scoreOnBoard, 
-                        		() -> new TreeMap<Integer, List<String>>(Comparator.<Integer>naturalOrder().reversed()),
-                                Collectors.toList()
-                            )
-                        ) ;
-         System.out.println("Best words of Shakespeare played as first move : " + mapOnBoard) ;
+        Function<String, Integer> scoreOnBoard = null;
+        		
+        Map<Integer, List<String>> mapOnBoard = null;
+        
+        System.out.println("Best words of Shakespeare played as first move : " + mapOnBoard) ;
 	}
 	
 	private static Set<String> readFile(String folder, String file) throws IOException {
