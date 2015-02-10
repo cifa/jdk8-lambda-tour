@@ -10,13 +10,10 @@ import java.util.NavigableMap;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-
-import com.sun.corba.se.impl.encoding.OSFCodeSetRegistry.Entry;
 
 public class Scrabble {
 
@@ -29,7 +26,7 @@ public class Scrabble {
 			   9, 2, 2, 1, 12, 2, 3, 2, 9, 1, 1, 4, 2, 6, 8, 2, 1, 6, 4, 6, 4, 2, 2, 1, 2, 1 };
 
 	/**
-	 * HOW GOOD WOULD SHAKESPEAR BE IF HE PLAYED SCRABBLE???
+	 * HOW GOOD WOULD SHAKESPEARE BE IF HE PLAYED SCRABBLE???
 	 */
 	public static void main(String... args) throws Exception {
 		Set<String> scrabbleWords =  readFile("files", "ospd.txt");
@@ -105,6 +102,36 @@ public class Scrabble {
 		System.out.println("Words of Shakespeare grouped by their Scrabble score : " + shakespeareScores2);
 		
 		// TASK 3 - Hmmm, we are getting some strange words here.  Modify code in task 2 to process only words that are listed in the scrabble dictionary
+	
+	
+		// BONUS (If we have time) Can you find the best word that Shakespeare could have played as the first move?
+        // scoring function 
+        Function<String, Integer> scoreOnBoard = 
+        		word -> 2*( // the first word scores double at Scrabble 
+	        				score2.apply(word) + 
+	        				Stream.of(
+	        				    word.chars().skip(4), 
+	        				    word.chars().limit(Integer.max(0, word.length() - 4))
+	        				)
+	        				.flatMapToInt(Function.identity())
+	        				.map(letter -> scrabbleENScore[letter - 'a'])
+	        				.max()
+	        				.orElse(0)
+	        			) +
+	        			(word.length() == 7 ? 50 : 0) ; // there is a 50 pts bonus for a 7 letters word
+        Map<Integer, List<String>> mapOnBoard = 
+                shakespeareWords.stream()
+                        .filter(scrabbleWords::contains)
+                        .filter(word -> nBlanks.apply(word) <= 2L)
+                        .filter(word -> scoreOnBoard.apply(word ) >= 114)
+                        .collect(
+                            Collectors.groupingBy(
+                        		scoreOnBoard, 
+                        		() -> new TreeMap<Integer, List<String>>(Comparator.<Integer>naturalOrder().reversed()),
+                                Collectors.toList()
+                            )
+                        ) ;
+         System.out.println("Best words of Shakespeare played as first move : " + mapOnBoard) ;
 	}
 	
 	private static Set<String> readFile(String folder, String file) throws IOException {
