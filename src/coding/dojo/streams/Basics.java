@@ -18,12 +18,7 @@ public class Basics {
 	public List<String> readWords() throws IOException {
 		Pattern p = Pattern.compile(",");
 		Path path = Paths.get("files", "words.csv");
-		return Files.lines(path)
-				.flatMap(p::splitAsStream)
-				.map(String::toLowerCase)
-				.distinct()
-				.sorted()
-				.collect(toList()); 
+		return null; 
 	}
 	
 	/*
@@ -31,18 +26,13 @@ public class Basics {
 	 * it to count all words (from readWords()) longer than X characters? 
 	 */
 	public int countWordsStrictlyLongerThan(int noOfChars) throws IOException {
-		return readWords().stream()
-				.filter(w -> w.length() > noOfChars)
-				.mapToInt(w -> 1)
-				.reduce(0, (x, y) -> x+y);
+		return -1;
 	}
 	
 	/*
 	 * What about reducing all words into one string?
 	 */
 	public String joinWordsLongerThanBy(int noOfChars, String pattern) throws IOException {
-		return readWords().stream()
-				.filter(w -> w.length() > noOfChars)
-				.collect(joining(pattern));
+		return null;
 	}
 }

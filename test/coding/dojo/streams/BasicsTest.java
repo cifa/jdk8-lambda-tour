@@ -66,6 +66,7 @@ public class BasicsTest {
 	public void checkJoiningWordsByComma() throws IOException {
 		String pattern = ", ";
 		String joined = b.joinWordsLongerThanBy(4, pattern);
+		assertNotNull(joined);
 		assertEquals(NO_OF_WORDS_LONGER_THAN_4, joined.split(pattern).length);
 	}
 }
