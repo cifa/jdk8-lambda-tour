@@ -48,21 +48,14 @@ public class Basics {
 	 * (1 x 1) + (1 x 2) + ... + (10 x 9) + (10 * 10)    
 	 */
 	public long getSumOfMultiplications() {
-		return getStream1To10()
-				.flatMap(i -> getStream1To10().map(x -> x * i))
-				.sum();
+		return 0;
 	}
 	
 	/*
 	 * Could we use map -> reduce for N lists?
 	 */
 	public long getSumOfMultiplicationsGeneric(int N) {
-		long sum = IntStream.range(0, N)
-				.parallel()
-				.boxed()
-				.map(i -> getStream1To10())
-				.reduce(1l, (a, b) -> b.mapToLong(i -> a * i).sum(), (a, b) -> a * b);
-		return sum;
+		return 0;
 	}
 	
 	private IntStream getStream1To10() {
