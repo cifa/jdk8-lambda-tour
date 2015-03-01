@@ -69,4 +69,34 @@ public class BasicsTest {
 		assertNotNull(joined);
 		assertEquals(NO_OF_WORDS_LONGER_THAN_4, joined.split(pattern).length);
 	}
+	
+	@Test
+	public void checkBonusResult() throws IOException {
+		long sum = b.getSumOfMultiplications();
+		assertEquals(3025, sum);
+	}
+	
+	@Test
+	public void checkGenericBonusFor1() throws IOException {
+		long sum = b.getSumOfMultiplicationsGeneric(1);
+		assertEquals(55, sum);
+	}
+	
+	@Test
+	public void checkGenericBonusFor2() throws IOException {
+		long sum = b.getSumOfMultiplicationsGeneric(2);
+		assertEquals(3025, sum);
+	}
+	
+	@Test
+	public void checkGenericBonusFor3() throws IOException {
+		long sum = b.getSumOfMultiplicationsGeneric(3);
+		assertEquals(166375, sum);
+	}
+	
+	@Test
+	public void checkGenericBonusFor4() throws IOException {
+		long sum = b.getSumOfMultiplicationsGeneric(4);
+		assertEquals(9150625, sum);
+	}
 }
